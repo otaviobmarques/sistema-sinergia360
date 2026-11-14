@@ -36,6 +36,7 @@ export default function Login() {
         <button className="btn" disabled={ocupado}>{ocupado ? 'Aguarde…' : 'Entrar'}</button>
         <p className="nota" style={{ margin: 0 }}>O acesso é criado por um administrador em Administrativo › Usuários do sistema.</p>
       </form>
+      <div className="dev" style={{ marginTop: 22 }}><span>Desenvolvido por</span><img src="/domma-escuro.png" alt="Domma Tecnologia" /></div>
     </div>
   );
 }
