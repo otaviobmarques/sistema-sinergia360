@@ -25,7 +25,7 @@ export default async function AppLayout({ children }) {
         <img src="/logo-escuro.png" alt="Sinergia 360 Consultoria Empresarial" />
         <Nav />
         <div className="pe">
-          <span>{user.email}</span>
+          <span>{user.email.replace('@gestao.sinergia360.com.br', '')}</span>
           <form action={sair}><button>Sair</button></form>
         </div>
       </aside>

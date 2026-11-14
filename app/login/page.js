@@ -13,7 +13,9 @@ export default function Login() {
     e.preventDefault();
     setOcupado(true); setMsg(null);
     const f = new FormData(e.currentTarget);
-    const email = f.get('email').trim(), password = f.get('senha');
+    // Quem entra com nome de usuário (sem @) usa a conta interna do sistema.
+    const digitado = f.get('email').trim();
+    const email = digitado.includes('@') ? digitado : `${digitado.toLowerCase()}@gestao.sinergia360.com.br`, password = f.get('senha');
     const supabase = createClient();
     if (modo === 'entrar') {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -33,7 +35,7 @@ export default function Login() {
         <img src="/logo-claro.png" alt="Sinergia 360 Consultoria Empresarial" />
         <h2 style={{ margin: 0 }}>{modo === 'entrar' ? 'Entrar no sistema de gestão' : 'Criar conta de acesso'}</h2>
         {msg && <div className={'aviso' + (msg.erro ? ' erro' : '')}>{msg.texto}</div>}
-        <label><span>E-mail</span><input id="email" name="email" type="email" required autoComplete="email" /></label>
+        <label><span>{modo === 'entrar' ? 'E-mail ou usuário' : 'E-mail'}</span><input id="email" name="email" type={modo === 'entrar' ? 'text' : 'email'} required autoComplete="username" /></label>
         <label><span>Senha</span><input id="senha" name="senha" type="password" required minLength={8} autoComplete={modo === 'entrar' ? 'current-password' : 'new-password'} /></label>
         <button className="btn" disabled={ocupado}>{ocupado ? 'Aguarde…' : modo === 'entrar' ? 'Entrar' : 'Criar conta'}</button>
         <button type="button" className="btn sec" onClick={() => { setMsg(null); setModo(modo === 'entrar' ? 'criar' : 'entrar'); }}>

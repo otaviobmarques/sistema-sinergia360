@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { carregarTags } from '@/lib/dados';
+import TrocarSenha from '@/components/TrocarSenha';
 import { addTag, removerTag, addConvite, removerConvite } from '../actions';
 
 const TIPOS = { franquia: 'Franquia', canal: 'Canal', servico: 'Serviço', grupo: 'Grupo de sócios', outro: 'Outro' };
-const PAPEIS = { admin: 'Administrador', operacao: 'Operação', financeiro: 'Financeiro' };
+const PAPEIS = { admin: 'Administrador', operacao: 'Administrativo', financeiro: 'Financeiro' };
 
 export default async function Configuracoes() {
   const supabase = await createClient();
@@ -49,5 +50,6 @@ export default async function Configuracoes() {
         <p className="nota">A pessoa liberada cria a própria senha em "Primeiro acesso" na tela de entrada.</p>
       </div>
     </div>
+    <div className="painel t" style={{ maxWidth: 520 }}><h2>Trocar minha senha</h2><TrocarSenha /></div>
   </>);
 }
