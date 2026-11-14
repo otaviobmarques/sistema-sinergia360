@@ -3,13 +3,14 @@ import { createClient } from '@/lib/supabase/server';
 import { carregarTags, carregarPendencias, CATEGORIAS } from '@/lib/dados';
 import { fmtDoc } from '@/lib/format';
 import { FiltroTag } from '@/components/Filtros';
+import Tag from '@/components/Tag';
 
 export default async function Pendencias({ searchParams }) {
   const sp = await searchParams;
   const filtros = { tag: sp.tag || '', cat: sp.cat || '', q: sp.q || '' };
   const supabase = await createClient();
   const [tags, { lista, totais, comPendencia, emCarteira }] = await Promise.all([carregarTags(supabase), carregarPendencias(supabase, filtros)]);
-  const nomeTag = new Map(tags.map((t) => [t.id, t.nome]));
+  const tagPorId = new Map(tags.map((t) => [t.id, t]));
   const link = (cat) => '/pendencias?' + new URLSearchParams(Object.entries({ ...filtros, cat }).filter(([, v]) => v)).toString();
   const ordem = Object.keys(CATEGORIAS);
   return (<>
@@ -41,7 +42,7 @@ export default async function Pendencias({ searchParams }) {
           <tr key={c.id}>
             <td style={{ minWidth: 240 }}><Link className="nome" href={`/clientes/${c.id}`}>{c.razao_social}</Link>
               <div className="sub num">{fmtDoc(c.documento)} · {c.cidade || '—'}{c.uf ? ` · ${c.uf}` : ''}</div>
-              <div className="pills" style={{ marginTop: 4 }}>{c.tagIds.map((t) => <span key={t} className="pill ok">{nomeTag.get(t)}</span>)}</div></td>
+              <div className="pills" style={{ marginTop: 4 }}>{c.tagIds.map((t) => <Tag key={t} t={tagPorId.get(t)} />)}</div></td>
             <td className="sub" style={{ minWidth: 150 }}>{c.contato || '—'}{c.email ? <div>{c.email}</div> : null}</td>
             <td>{ordem.filter((k) => itens.some((i) => i.cat === k)).map((k) => (
               <div key={k} style={{ display: 'flex', gap: 8, alignItems: 'baseline', margin: '3px 0', flexWrap: 'wrap' }}>

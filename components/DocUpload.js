@@ -7,7 +7,7 @@ import { TIPOS_DOC } from '@/lib/format';
 
 const LIMITE = 25 * 1024 * 1024;
 
-export default function DocUpload({ clienteId }) {
+export default function DocUpload({ clienteId, tipoInicial }) {
   const router = useRouter();
   const [msg, setMsg] = useState(null);
   const [ocupado, setOcupado] = useState(false);
@@ -36,7 +36,7 @@ export default function DocUpload({ clienteId }) {
   return (
     <form onSubmit={enviar} className="campos">
       {msg && <div className={'aviso c12' + (msg.erro ? ' erro' : '')} role="status">{msg.texto}</div>}
-      <label className="c3"><span>Tipo</span><select id="doc-tipo" name="tipo">{Object.entries(TIPOS_DOC).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
+      <label className="c3"><span>Tipo</span><select id="doc-tipo" name="tipo" defaultValue={TIPOS_DOC[tipoInicial] ? tipoInicial : 'apolice_seguro'}>{Object.entries(TIPOS_DOC).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
       <label className="c5"><span>Arquivo (até 25 MB)</span><input id="doc-arquivo" name="arquivo" type="file" required /></label>
       <label className="c2"><span>Emissão</span><input id="doc-emissao" name="data_emissao" type="date" /></label>
       <label className="c2"><span>Vencimento</span><input id="doc-venc" name="data_vencimento" type="date" /></label>

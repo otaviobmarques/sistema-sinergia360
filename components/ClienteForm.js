@@ -74,7 +74,7 @@ export default function ClienteForm({ cliente, tags }) {
         <div className="campos">
           <div className="c12"><div className="rotulo" style={{ marginBottom: 6 }}>Tags</div>
             <div className="linha">{tags.map((t) => (
-              <label key={t.id} className="check"><input id={'tag-' + t.id} type="checkbox" name="tags" value={t.id} defaultChecked={c.tagIds?.includes(t.id)} /><span>{t.nome}</span></label>
+              <label key={t.id} className="check"><input id={'tag-' + t.id} type="checkbox" name="tags" value={t.id} defaultChecked={c.tagIds?.includes(t.id)} /><span><i style={{ display: 'inline-block', width: 10, height: 10, background: t.cor, marginRight: 6 }} />{t.nome}</span></label>
             ))}</div>
           </div>
           <label className="c3"><span>Situação</span><select id="c-situacao" name="situacao" value={situacao} onChange={(e) => setSituacao(e.target.value)}>{Object.entries(SITUACOES).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>

@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { carregarTags } from '@/lib/dados';
 import TrocarSenha from '@/components/TrocarSenha';
 import EnviarLink from '@/components/EnviarLink';
-import { addTag, removerTag, criarUsuario, editarUsuario, excluirUsuario } from '../actions';
+import Tag from '@/components/Tag';
+import { addTag, editarTag, removerTag, criarUsuario, editarUsuario, excluirUsuario } from '../actions';
 
 const TIPOS = { franquia: 'Franquia', canal: 'Canal', servico: 'Serviço', grupo: 'Grupo de sócios', outro: 'Outro' };
 const PAPEIS = { admin: 'Admin', administrativo: 'Administrativo' };
@@ -70,13 +71,25 @@ export default async function Administrativo({ searchParams }) {
         <div className="tabela" style={{ marginBottom: 14 }}><table>
           <thead><tr><th>Tag</th><th>Tipo</th><th className="dir">Clientes</th><th></th></tr></thead>
           <tbody>{tags.map((t) => (
-            <tr key={t.id}><td><span className="pill ok">{t.nome}</span></td><td>{TIPOS[t.tipo]}</td><td className="dir num">{uso(t.id)}</td>
-              <td>{uso(t.id) === 0 && <form action={removerTag}><input type="hidden" name="id" value={t.id} /><button className="btn sec mini">Excluir</button></form>}</td></tr>
+            <tr key={t.id}><td><Tag t={t} /></td><td>{TIPOS[t.tipo]}</td><td className="dir num">{uso(t.id)}</td>
+              <td>
+                <details><summary className="rotulo" style={{ cursor: 'pointer' }}>Editar</summary>
+                  <form action={editarTag} className="filtros" style={{ marginTop: 8 }}>
+                    <input type="hidden" name="id" value={t.id} />
+                    <label><span>Nome</span><input id={'tg-n-' + t.id} name="nome" defaultValue={t.nome} required /></label>
+                    <label><span>Tipo</span><select id={'tg-t-' + t.id} name="tipo" defaultValue={t.tipo}>{Object.entries(TIPOS).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
+                    <label><span>Cor</span><input id={'tg-c-' + t.id} name="cor" type="color" defaultValue={t.cor} style={{ padding: 2, height: 38, width: 56 }} /></label>
+                    <button className="btn mini">Salvar</button>
+                  </form>
+                </details>
+                {uso(t.id) === 0 && <form action={removerTag} style={{ marginTop: 6 }}><input type="hidden" name="id" value={t.id} /><button className="btn sec mini">Excluir</button></form>}
+              </td></tr>
           ))}</tbody>
         </table></div>
         <form action={addTag} className="filtros">
           <label style={{ flex: '1 1 160px' }}><span>Nova tag</span><input id="tag-nome" name="nome" required /></label>
           <label><span>Tipo</span><select id="tag-tipo" name="tipo">{Object.entries(TIPOS).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
+          <label><span>Cor</span><input id="tag-cor" name="cor" type="color" defaultValue="#0F7E67" style={{ padding: 2, height: 38, width: 56 }} /></label>
           <button className="btn">Criar</button>
         </form>
       </div>

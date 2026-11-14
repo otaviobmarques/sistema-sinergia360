@@ -10,7 +10,7 @@ import { salvarIso, addPrazo, concluirPrazo, reabrirPrazo, removerPrazo, salvarA
 
 export default async function Cliente({ params, searchParams }) {
   const { id } = await params;
-  const { salvo } = await searchParams;
+  const { salvo, doc } = await searchParams;
   const supabase = await createClient();
   const [tags, { data: c }] = await Promise.all([
     carregarTags(supabase),
@@ -95,7 +95,7 @@ export default async function Cliente({ params, searchParams }) {
 
     <div className="painel t" id="documentos"><h2>Documentos</h2>
       <DocTabela docs={[...c.documentos].sort((a, b) => Number(b.vigente) - Number(a.vigente) || b.created_at.localeCompare(a.created_at))} hoje={hoje} />
-      <DocUpload clienteId={c.id} />
+      <DocUpload clienteId={c.id} tipoInicial={doc} />
     </div>
 
     <div className="painel t"><h2>Histórico de anotações</h2>
