@@ -177,6 +177,29 @@ export async function excluirUsuario(formData) {
   const { error } = await supabase.rpc('usuario_excluir', { p_id: txt(formData, 'id') });
   voltarUsuarios(error, 'Usuário excluído.');
 }
+export async function registrarDocumento(d) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (d.substituir) falhar((await supabase.from('documentos').update({ vigente: false }).eq('cliente_id', d.cliente_id).eq('tipo', d.tipo).eq('vigente', true)).error);
+  const { error } = await supabase.from('documentos').insert({
+    cliente_id: d.cliente_id, tipo: d.tipo, titulo: d.titulo || null, arquivo_path: d.arquivo_path, arquivo_nome: d.arquivo_nome,
+    tamanho: d.tamanho, mime: d.mime || null, data_emissao: d.data_emissao || null, data_vencimento: d.data_vencimento || null,
+    observacoes: d.observacoes || null, enviado_por: user?.email?.replace('@gestao.sinergia360.com.br', '') || null,
+  });
+  if (error) return { erro: error.message };
+  revalidatePath('/', 'layout');
+  return { ok: true };
+}
+export async function removerDocumento(formData) {
+  const supabase = await createClient();
+  const id = txt(formData, 'id');
+  const { data: doc } = await supabase.from('documentos').select('arquivo_path').eq('id', id).maybeSingle();
+  if (doc) {
+    falhar((await supabase.storage.from('documentos').remove([doc.arquivo_path])).error);
+    falhar((await supabase.from('documentos').delete().eq('id', id)).error);
+  }
+  revalidatePath('/', 'layout');
+}
 export async function sair() {
   const supabase = await createClient();
   await supabase.auth.signOut();
