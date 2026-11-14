@@ -110,3 +110,8 @@ input[type=checkbox]{width:auto}
   .chart .bar span{display:none}
 }
 @media print{.side,.filtros,.btn{display:none!important}.shell{display:block}main{padding:0}}
+
+/* Aplicativo instalado: respeita o entalhe e a barra de gestos do celular */
+.side{padding-top:calc(22px + env(safe-area-inset-top,0px))}
+main{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}
+@media (max-width:860px){.side{padding-top:calc(12px + env(safe-area-inset-top,0px))}}
