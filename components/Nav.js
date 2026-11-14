@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const itens = [
-  ['/', 'Dashboard'], ['/clientes', 'Clientes'], ['/vencimentos', 'Vencimentos'],
+  ['/', 'Dashboard'], ['/pendencias', 'Pendências'], ['/clientes', 'Clientes'], ['/vencimentos', 'Vencimentos'],
   ['/relatorios', 'Relatórios'], ['/financeiro', 'Financeiro'], ['/configuracoes', 'Administrativo'],
 ];
 export default function Nav() {

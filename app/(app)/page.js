@@ -28,7 +28,7 @@ export default async function Dashboard({ searchParams }) {
     { nome: 'ISO vencida', valor: vencidos.filter((v) => v.tipo.startsWith('iso_')).length, href: `/vencimentos?periodo=vencidos&tipo=iso${q}` },
     { nome: 'Auditorias atrasadas', valor: vencidos.filter((v) => v.tipo === 'auditoria_interna').length, href: `/vencimentos?periodo=vencidos&tipo=auditoria_interna${q}` },
     { nome: 'ISO suspensa', valor: carteira.filter((c) => c.iso?.situacao === 'suspensa').length, href: `/clientes?iso=suspensa${q}` },
-    { nome: 'Cadastros com pendência', valor: carteira.filter((c) => pendenciasDe(c).length).length, href: `/relatorios?r=pendencias${q}` },
+    { nome: 'Cadastros com pendência', valor: carteira.filter((c) => pendenciasDe(c).length).length, href: `/pendencias?cat=cadastro${q}` },
   ];
   const proximos = venc.filter((v) => v.data >= hoje).slice(0, 8);
   const porUf = Object.entries(carteira.reduce((a, c) => ((a[c.uf || '—'] = (a[c.uf || '—'] || 0) + 1), a), {}))
