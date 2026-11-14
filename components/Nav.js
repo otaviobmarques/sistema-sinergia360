@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 const itens = [
   ['/', 'Dashboard'], ['/pendencias', 'Pendências'], ['/clientes', 'Clientes'], ['/vencimentos', 'Vencimentos'],
-  ['/relatorios', 'Relatórios'], ['/financeiro', 'Financeiro'], ['/configuracoes', 'Administrativo'],
+  ['/relatorios', 'Relatórios'], ['/financeiro', 'Financeiro'], ['/integracoes', 'Integrações'], ['/configuracoes', 'Administrativo'],
 ];
 export default function Nav() {
   const path = usePathname();
