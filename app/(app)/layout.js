@@ -28,8 +28,11 @@ export default async function AppLayout({ children }) {
           <span>{user.email.replace('@gestao.sinergia360.com.br', '')}</span>
           <form action={sair}><button>Sair</button></form>
         </div>
+        <div className="dev"><span>Desenvolvido por</span><img src="/domma-escuro.png" alt="Domma Tecnologia" /></div>
       </aside>
-      <main>{children}</main>
+      <main>{children}
+        <div className="dev-rodape"><span>Desenvolvido por</span><img src="/domma-claro.png" alt="Domma Tecnologia" /></div>
+      </main>
     </div>
   );
 }
