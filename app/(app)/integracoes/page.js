@@ -12,8 +12,8 @@ const INTEGRACOES = [
   },
   {
     nome: 'Google Drive', resumo: 'Cópia organizada dos arquivos de cada cliente, com data de vencimento.',
-    faz: ['Criar uma pasta por cliente e guardar apólice de seguro, certificado da ISO, manual da qualidade (SGQ) e outros documentos', 'Mostrar os arquivos na ficha do cliente, cada um com tipo e data de vencimento', 'Avisar em Pendências quando um documento vencer ou estiver faltando'],
-    precisa: ['Conta Google da Sinergia 360 que será dona das pastas', 'Pasta raiz no Drive onde os clientes serão organizados'],
+    faz: ['Copiar para o Drive, numa pasta por cliente, os arquivos enviados em Documentos: apólice de seguro, certificado da ISO, manual da qualidade (SGQ) e outros documentos', 'Mostrar os arquivos na ficha do cliente, cada um com tipo e data de vencimento', 'Avisar em Pendências quando um documento vencer ou estiver faltando'],
+    precisa: ['Pasta raiz já definida no Drive do Otávio', 'Autorização do Google para o sistema gravar nessa pasta (credencial OAuth)'],
   },
 ];
 

@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { carregarTags } from '@/lib/dados';
 import ClienteForm from '@/components/ClienteForm';
+import DocUpload from '@/components/DocUpload';
+import DocTabela from '@/components/DocTabela';
 import { ISO_SIT, TIPOS_PRAZO, SITUACOES, SIT_CLASSE, fmtData, fmtDoc, faixa, hojeISO } from '@/lib/format';
 import { salvarIso, addPrazo, concluirPrazo, reabrirPrazo, removerPrazo, salvarApolice, removerApolice, addAnotacao } from '../../actions';
 
@@ -12,7 +14,7 @@ export default async function Cliente({ params, searchParams }) {
   const supabase = await createClient();
   const [tags, { data: c }] = await Promise.all([
     carregarTags(supabase),
-    supabase.from('clientes').select('*, cliente_tags(tag_id), iso_certificados(*), prazos(*), apolices(*), anotacoes(*)').eq('id', id).maybeSingle(),
+    supabase.from('clientes').select('*, cliente_tags(tag_id), iso_certificados(*), prazos(*), apolices(*), anotacoes(*), documentos(*)').eq('id', id).maybeSingle(),
   ]);
   if (!c) notFound();
   c.tagIds = c.cliente_tags.map((t) => t.tag_id);
@@ -89,6 +91,11 @@ export default async function Cliente({ params, searchParams }) {
         <label style={{ flex: '1 1 200px' }}><span>Observações</span><input id="pz-obs" name="observacoes" /></label>
         <button className="btn sec">Adicionar prazo</button>
       </form>
+    </div>
+
+    <div className="painel t" id="documentos"><h2>Documentos</h2>
+      <DocTabela docs={[...c.documentos].sort((a, b) => Number(b.vigente) - Number(a.vigente) || b.created_at.localeCompare(a.created_at))} hoje={hoje} />
+      <DocUpload clienteId={c.id} />
     </div>
 
     <div className="painel t"><h2>Histórico de anotações</h2>
