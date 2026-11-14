@@ -7,14 +7,14 @@ export default async function AppLayout({ children }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
-  const { data: membro } = await supabase.from('equipe').select('papel').eq('user_id', user.id).maybeSingle();
+  const { data: membro } = await supabase.from('equipe').select('papel, bloqueado').eq('user_id', user.id).maybeSingle();
 
-  if (!membro) {
+  if (!membro || membro.bloqueado) {
     return (
       <div className="login"><div className="cx">
         <img src="/logo-claro.png" alt="Sinergia 360" />
-        <h2>Acesso aguardando liberação</h2>
-        <p style={{ margin: 0 }}>A conta <strong>{user.email}</strong> foi criada, mas ainda não está na equipe. Peça a um administrador para liberar este e-mail em Configurações.</p>
+        <h2>{membro?.bloqueado ? 'Acesso bloqueado' : 'Acesso não liberado'}</h2>
+        <p style={{ margin: 0 }}>A conta <strong>{user.email}</strong> não tem acesso ao sistema. Fale com um administrador da Sinergia 360.</p>
         <form action={sair}><button className="btn sec">Sair</button></form>
       </div></div>
     );

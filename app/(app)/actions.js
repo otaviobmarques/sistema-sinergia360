@@ -152,18 +152,30 @@ export async function removerTag(formData) {
   falhar((await supabase.from('tags').delete().eq('id', Number(formData.get('id')))).error);
   revalidatePath('/', 'layout');
 }
-export async function addConvite(formData) {
-  const supabase = await createClient();
-  const email = txt(formData, 'email')?.toLowerCase();
-  if (email) falhar((await supabase.from('convites').upsert({ email, papel: txt(formData, 'papel') || 'operacao' })).error);
+function voltarUsuarios(error, ok) {
   revalidatePath('/configuracoes');
+  redirect('/configuracoes?' + new URLSearchParams(error ? { erro: error.message } : { ok }).toString() + '#usuarios');
 }
-export async function removerConvite(formData) {
+export async function criarUsuario(formData) {
   const supabase = await createClient();
-  const email = txt(formData, 'email');
-  falhar((await supabase.from('convites').delete().eq('email', email)).error);
-  falhar((await supabase.from('equipe').delete().eq('email', email)).error);
-  revalidatePath('/configuracoes');
+  const { error } = await supabase.rpc('usuario_criar', {
+    p_email: txt(formData, 'email') || '', p_senha: (formData.get('senha') || '').toString(),
+    p_nome: txt(formData, 'nome') || '', p_papel: txt(formData, 'papel') || 'administrativo',
+  });
+  voltarUsuarios(error, 'Usuário cadastrado. Use "Enviar link" para avisar a pessoa.');
+}
+export async function editarUsuario(formData) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('usuario_editar', {
+    p_id: txt(formData, 'id'), p_nome: txt(formData, 'nome') || '', p_papel: txt(formData, 'papel'),
+    p_senha: (formData.get('senha') || '').toString(), p_bloqueado: formData.get('bloqueado') === '1',
+  });
+  voltarUsuarios(error, 'Usuário atualizado.');
+}
+export async function excluirUsuario(formData) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('usuario_excluir', { p_id: txt(formData, 'id') });
+  voltarUsuarios(error, 'Usuário excluído.');
 }
 export async function sair() {
   const supabase = await createClient();
