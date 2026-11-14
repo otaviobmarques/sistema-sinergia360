@@ -141,10 +141,17 @@ export async function alternarInadimplente(formData) {
   revalidatePath('/', 'layout');
 }
 
+const corValida = (c) => (/^#[0-9a-fA-F]{6}$/.test(c || '') ? c : '#0F7E67');
 export async function addTag(formData) {
   const supabase = await createClient();
   const nome = txt(formData, 'nome');
-  if (nome) falhar((await supabase.from('tags').insert({ nome, tipo: txt(formData, 'tipo') || 'outro' })).error);
+  if (nome) falhar((await supabase.from('tags').insert({ nome, tipo: txt(formData, 'tipo') || 'outro', cor: corValida(txt(formData, 'cor')) })).error);
+  revalidatePath('/', 'layout');
+}
+export async function editarTag(formData) {
+  const supabase = await createClient();
+  const nome = txt(formData, 'nome');
+  if (nome) falhar((await supabase.from('tags').update({ nome, tipo: txt(formData, 'tipo') || 'outro', cor: corValida(txt(formData, 'cor')) }).eq('id', Number(formData.get('id')))).error);
   revalidatePath('/', 'layout');
 }
 export async function removerTag(formData) {
@@ -199,6 +206,24 @@ export async function removerDocumento(formData) {
     falhar((await supabase.from('documentos').delete().eq('id', id)).error);
   }
   revalidatePath('/', 'layout');
+}
+export async function salvarIntegracao(formData) {
+  const supabase = await createClient();
+  const chave = txt(formData, 'chave');
+  const config = {}, segredos = {};
+  for (const [nome, valor] of formData.entries()) {
+    const v = (valor || '').toString();
+    if (nome.startsWith('c_') && v.trim()) config[nome.slice(2)] = v.trim();
+    if (nome.startsWith('s_') && v.trim()) segredos[nome.slice(2)] = v.trim();
+    if (nome.startsWith('r_') && v === 'on') segredos[nome.slice(2)] = '__remover__';
+  }
+  if (chave === 'drive' && config.pasta_url) {
+    const m = config.pasta_url.match(/folders\/([A-Za-z0-9_-]{10,})/) || config.pasta_url.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
+    if (m) config.pasta_id = m[1];
+  }
+  const { error } = await supabase.rpc('integracao_salvar', { p_chave: chave, p_config: config, p_segredos: segredos });
+  revalidatePath('/integracoes');
+  redirect('/integracoes?' + new URLSearchParams(error ? { erro: error.message } : { ok: '1' }).toString() + '#' + chave);
 }
 export async function sair() {
   const supabase = await createClient();

@@ -3,12 +3,13 @@ import { createClient } from '@/lib/supabase/server';
 import { carregarClientes, carregarTags, filtrarClientes } from '@/lib/dados';
 import { SITUACOES, SIT_CLASSE, SERVICOS, UFS, fmtDoc, fmtData, fmtMoeda } from '@/lib/format';
 import { FiltroTag } from '@/components/Filtros';
+import Tag from '@/components/Tag';
 
 export default async function Clientes({ searchParams }) {
   const sp = await searchParams;
   const supabase = await createClient();
   const [tags, todos] = await Promise.all([carregarTags(supabase), carregarClientes(supabase)]);
-  const nomeTag = new Map(tags.map((t) => [t.id, t.nome]));
+  const tagPorId = new Map(tags.map((t) => [t.id, t]));
   const lista = filtrarClientes(todos, sp);
   const qs = new URLSearchParams(Object.entries(sp).filter(([, v]) => v)).toString();
   return (<>
@@ -31,7 +32,7 @@ export default async function Clientes({ searchParams }) {
         {lista.map((c) => (
           <tr key={c.id}>
             <td><Link className="nome" href={`/clientes/${c.id}`}>{c.razao_social}</Link><div className="sub num">{fmtDoc(c.documento)}</div></td>
-            <td><div className="pills">{c.tagIds.map((t) => <span key={t} className="pill ok">{nomeTag.get(t)}</span>)}</div></td>
+            <td><div className="pills">{c.tagIds.map((t) => <Tag key={t} t={tagPorId.get(t)} />)}</div></td>
             <td>{c.cidade || '—'}{c.uf ? ` · ${c.uf}` : ''}</td>
             <td><div className="pills"><span className={'pill ' + SIT_CLASSE[c.situacao]}>{SITUACOES[c.situacao]}</span>{c.inadimplente && <span className="pill ruim">Inadimplente</span>}{c.iso?.situacao === 'suspensa' && <span className="pill ruim">ISO suspensa</span>}</div></td>
             <td className="sub">{SERVICOS.filter(([k]) => c[k]).map(([, v]) => v.replace(' (SGQ)', '')).join(', ') || '—'}</td>
